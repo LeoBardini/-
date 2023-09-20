@@ -1,3 +1,4 @@
+/*
 import os
 import re
 import sys
@@ -126,7 +127,7 @@ if __name__ == '__main__':
             else:
                 print("Alloc size:" + str(vm_alloc_size) + "KB, Not dumpheap!")
 
-
+*/
 python obvmem.py xxx.xxx.xx 5 150
 
 xxx.xxx.xx 应用包名
