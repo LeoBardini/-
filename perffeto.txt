@@ -1,0 +1,259 @@
+1、config.pbtx
+``
+flush_period_ms: 30000
+file_write_period_ms: 604800000
+incremental_state_config {
+    clear_period_ms: 15000
+}
+
+buffers: {
+    size_kb: 196608
+    fill_policy: RING_BUFFER
+}
+
+buffers: {
+    size_kb: 4096
+    fill_policy: RING_BUFFER
+}
+
+# duration_ms: 30000
+
+# KEEP first so the early KALLSYMS_PARSE is recorded.
+data_sources: {
+    config {
+	  name: "perfetto.metatrace"
+	  target_buffer: 1
+	}
+}
+
+data_sources: {
+    config {
+        name: "linux.process_stats"
+        target_buffer: 1
+        process_stats_config {
+            scan_all_processes_on_start: true
+			proc_stats_poll_ms: 10000
+        }
+    }
+}
+
+data_sources: {
+    config {
+        name: "linux.ftrace"
+		target_buffer: 0
+        ftrace_config {
+#       symbolize_ksyms: true
+            atrace_categories: "am"
+            atrace_categories: "adb"
+ #           atrace_categories: "aidl"
+#            atrace_categories: "dalvik"
+            atrace_categories: "audio"
+			atrace_categories: "video"
+			atrace_categories: "sched"
+			atrace_categories: "idle"
+			atrace_categories: "freq"
+			atrace_categories: "pagecache"
+			atrace_categories: "disk"
+			atrace_categories: "memreclaim"
+			atrace_categories: "camera"
+            atrace_categories: "binder_lock"
+            atrace_categories: "binder_driver"
+            atrace_categories: "bionic"
+   #         atrace_categories: "database"
+            atrace_categories: "gfx"
+            atrace_categories: "hal"
+  #          atrace_categories: "input"
+			atrace_categories: "i2c"
+#			atrace_categories: "irq"
+            atrace_categories: "pm"
+            atrace_categories: "power"
+            atrace_categories: "rs"
+            atrace_categories: "res"
+            atrace_categories: "sm"
+            atrace_categories: "ss"
+            atrace_categories: "view"
+            atrace_categories: "webview"
+            atrace_categories: "wm"
+			atrace_categories: "thermal"
+			atrace_categories: "memory"
+			
+            atrace_apps: "*"
+			compact_sched {
+			    enabled: true
+			}
+            buffer_size_kb: 12288
+			drain_period_ms: 1000
+        }
+    }
+}
+
+data_sources: {
+    config {
+	     name: "android.gpu.memory"
+		 target_buffer: 0
+    }
+}
+
+data_sources: {
+    config {
+         name: "android.hardware.camera"
+         target_buffer: 0
+    }
+}
+
+# This data source is supported only on Android userdebug builds
+#data_sources: {
+#    config {
+#        name: "android.log"
+#		target_buffer: 0
+#        android_log_config {
+#		     filter_tags: "perfetto"
+#            filter_tags: "my_tag_2"
+#            log_ids: LID_CRASH
+#            log_ids: LID_KERNEL
+#            log_ids: LID_DEFAULT
+#            log_ids: LID_SYSTEM
+#			log_ids: LID_EVENTS
+#        }
+#    }
+#}
+
+#data_sources: {
+#    config {
+#        name: "linux.ftrace"
+#		target_buffer: 0
+#        ftrace_config {
+#		symbolize_ksyms: true
+		
+   #    ftrace_events: "mm_event/mm_event_record"
+   #    ftrace_events: "kmem/rss_stat"
+   #    ftrace_events: "kmem/ion_heap_grow"
+   #    ftrace_events: "kmem/ion_heap_shrink"
+   
+    #   ftrace_events: "thermal/thermal_temperature"
+	#	ftrace_events: "thermal/cdev_update"		
+		
+	#	ftrace_events: "sched/sched_blocked_reason"
+	#	ftrace_events: "workqueue/workqueue_execute_start"
+	#	ftrace_events: "workqueue/workqueue_queue_work"
+	#	ftrace_events: "workqueue/workqueue_execute_end"
+	
+	    # For new userspace lmkds.
+        # SELECT * FROM instant
+        # This is not strictly required but is useful to know the state
+        # of the process (FG, cached, ...) before it got killed.
+    #    ftrace_events: "oom/oom_score_adj_update"
+            
+#           buffer_size_kb: 12288
+#           drain_period_ms: 1000
+    #   }
+    #}
+#}
+
+data_sources: {
+    config {
+        name: "linux.sys_stats"
+		target_buffer: 1
+        sys_stats_config {
+            meminfo_period_ms: 1000
+            meminfo_counters: MEMINFO_MEM_TOTAL
+            meminfo_counters: MEMINFO_MEM_FREE
+            meminfo_counters: MEMINFO_MEM_AVAILABLE
+			meminfo_counters: MEMINFO_CACHED
+			meminfo_counters: MEMINFO_ACTIVE_ANON
+			meminfo_counters: MEMINFO_INACTIVE_ANON
+			meminfo_counters: MEMINFO_ACTIVE_FILE
+			meminfo_counters: MEMINFO_INACTIVE_FILE
+			meminfo_counters: MEMINFO_UNEVICTABLE
+
+            vmstat_period_ms: 1000
+            vmstat_counters: VMSTAT_NR_FREE_PAGES
+            vmstat_counters: VMSTAT_NR_UNEVICTABLE
+			vmstat_counters: VMSTAT_NR_MLOCK
+			vmstat_counters: VMSTAT_NR_ANON_PAGES
+			vmstat_counters: VMSTAT_NR_FILE_PAGES
+			vmstat_counters: VMSTAT_NR_MAPPED
+            vmstat_counters: VMSTAT_NR_INACTIVE_ANON
+            vmstat_counters: VMSTAT_NR_ACTIVE_ANON
+			vmstat_counters: VMSTAT_NR_INACTIVE_FILE
+            vmstat_counters: VMSTAT_NR_ACTIVE_FILE
+			vmstat_counters: VMSTAT_WORKINGSET_REFAULT
+			vmstat_counters: VMSTAT_NR_DIRTY
+			vmstat_counters: VMSTAT_NR_WRITEBACK
+			vmstat_counters: VMSTAT_NR_SLAB_RECLAIMABLE
+			vmstat_counters: VMSTAT_NR_SLAB_UNRECLAIMABLE
+			vmstat_counters: VMSTAT_NR_PAGE_TABLE_PAGES
+
+            stat_period_ms: 1000
+            stat_counters: STAT_CPU_TIMES
+            stat_counters: STAT_FORK_COUNT
+			stat_counters: STAT_IRQ_COUNTS
+        }
+    }
+}
+
+#data_sources: {
+#    config {
+#	    name: "linux.perf"
+#		target_buffer: 0
+#	    perf_event_config {
+#	        all_cpus: true
+#            sampling_frequency: 100
+#			kernel_frames: true
+#			target_pid: 702
+		#   target_cmdline: "surfaceflinger"
+#		}
+#	}
+#}
+
+producers {
+        producer_name: "perfetto.traced_probes"
+        shm_size_kb:  8192
+        page_size_kb: 4		
+}
+
+# trace_duration_ms and triggered traces can not be used at the same time.
+# If the "stop_trace" is hit, the trace is stopped after 1s.
+trigger_config {
+    trigger_mode: STOP_TRACING
+    # If no trigger is hit, the trace will end after 30s.
+    trigger_timeout_ms: 1800000
+    triggers {
+        name: "stop_trace"
+        stop_delay_ms: 1000
+    }
+}
+``
+2、start_perfetto.bat
+``
+::@set TIMESTAMP=%date:~0,4%-%date:~5,2%-%date:~8,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
+::@set TRACE_FILE=%TIMESTAMP%.perfetto-trace
+@set TRACE_FILE=perfetto-trace
+@adb wait-for-device
+@type config.pbtx | adb shell perfetto -c - --txt --background -o /data/misc/perfetto-traces/%TRACE_FILE%
+@rem adb pull /data/misc/perfetto-traces/mytrace .
+@rem adb shell "rm -rf /data/misc/perfetto-traces/mytrace"
+``
+3、stop_perfetto.bat
+``
+@echo off
+::@set TIMESTAMP=%date:~0,4%-%date:~5,2%-%date:~8,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
+::@set TRACE_FILE=%TIMESTAMP%.perfetto-trace
+@set TRACE_FILE=perfetto-trace
+@adb wait-for-device
+@adb shell "/system/bin/trigger_perfetto stop_trace"
+@echo adb pulling trace file ...
+@timeout 60
+@adb pull /data/misc/perfetto-traces/%TRACE_FILE% .
+@adb shell "rm -rf /data/misc/perfetto-traces/%TRACE_FILE%"
+@set TIMESTAMP0=%date:~0,4%-%date:~5,2%-%date:~8,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
+@set TIMESTAMP=%TIMESTAMP0: =0%
+if exist perfetto-trace (rename %TRACE_FILE% %TIMESTAMP%.perfetto-trace)
+@echo done.
+``
+
+4、readme.txt
+1. 将start_perfetto.bat, stop_perfetto.bat, config.pbtx三个文件放到同一个目录
+2. 打开命令窗口，执行start_perfetto.bat
+3.复现问题
+4.  执行stop_perfetto.bat，将trace文件发来
